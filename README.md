@@ -1,1 +1,1 @@
-# Python-101
+# Hangman by Stefania Sandu, Daniela Becheanu, Catalina Encea
