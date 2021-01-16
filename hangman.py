@@ -32,7 +32,34 @@ alphabet = list(string.ascii_uppercase) # Getting all the letters in the latin a
 
 class Button(object): # A GENERAL CLASS FOR ALL THE BUTTONS ON THE SCREEN (LETTERS & LANGUAGE BUTTONS)
     def __init__(self, color, pos, width, height, letter, active = False, type = 1, size = 40):
-        pass
+        self.type = type #TYPE 1 IS A LETTER, TYPE 2 IS A LANGUAGE BUTTON
+        self.active = active    # A VARIABLE ONLY FOR TYPE 2
+        self.clicked = False    # A VARIABLE ONLY FOR TYPE 1
+        self.rollOver = False   # A VARIABLE ONLY FOR TYPE 1
+        self.size = size
+        self.font = pg.font.SysFont(None, self.size)
+        self.color = color
+        self.letter = letter
+        self.pos = pos
+        self.width = width
+        self.height = height
+        self.subsurface = pg.Surface((self.width, self.height))         # CREATING A SUBSURFACE TO
+        self.subsurface.fill(self.color)                                # GET A RECT (FOR COLLISION)
+        self.text = self.font.render(self.letter, True, colors["lavender"])
 
     def Draw(self, surface):
-        pass
+         if self.type == 1:
+            if self.rollOver:                   # IF A TYPE 1 BUTTON IS UNDER
+                self.subsurface.set_alpha(200)  # THE MOUSE, MAKE IT LESS VIBRANT
+            else:
+                self.subsurface.set_alpha(255)
+            if not self.clicked:
+                surface.blit(self.subsurface, self.pos)
+                self.subsurface.blit(self.text, (self.width/4,self.height/5))
+        if self.type == 2:
+            if self.active:                     # IF A TYPE 2 BUTTON IS ACTIVE
+                self.subsurface.set_alpha(255)  # MAKE IT'S COLOR MORE VIBRANT
+            else:
+                self.subsurface.set_alpha(100)
+            surface.blit(self.subsurface, self.pos)
+            self.subsurface.blit(self.text, (self.width / 4, self.height / 5))
