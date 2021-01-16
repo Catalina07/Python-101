@@ -114,8 +114,6 @@ spaceCount = 0  # COUNTING HOW MANY SPACES A WORD HAS, IT'LL BE IMPORTANT WHEN C
 for letter in currentLanguage[currentWord]: # - IF YOU GUESSED THE WORD COMPLETELY.
     if letter == " ":
         spaceCount += 1
-print(len(wordsEN))
-print(len(wordsRO))
 
 while True:
     for event in pg.event.get():
