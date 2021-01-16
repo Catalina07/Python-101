@@ -21,12 +21,12 @@ colors = {"black":(0,0,0), "darkgray":(70,70,70), "gray":(128,128,128), "lightgr
           "turquoise":(64,224,208),"beige":(245,245,220),"honeydew":(240,255,240),"lavender":(230,230,250),"crimson":(220,20,60)}
 
 # Loading images to a dictionary
-# images = {"logo":pg.image.load("imgs/logo.png"),0:pg.image.load("imgs/empty.png"), 1:pg.image.load("imgs/v1.png"), 2:pg.image.load("imgs/v2.png"),
-#           3:pg.image.load("imgs/v3.png"),4:pg.image.load("imgs/v4.png"),5:pg.image.load("imgs/v5.png"),6:pg.image.load("imgs/v6.png")}
+images = {"logo":pg.image.load("imgs/logo.png"),0:pg.image.load("imgs/empty.png"), 1:pg.image.load("imgs/v1.png"), 2:pg.image.load("imgs/v2.png"),
+          3:pg.image.load("imgs/v3.png"),4:pg.image.load("imgs/v4.png"),5:pg.image.load("imgs/v5.png"),6:pg.image.load("imgs/v6.png")}
 
-# # Loading sounds to a dicionary
-# sounds = {"win":pg.mixer.Sound("sound/win.wav"), "lose":pg.mixer.Sound("sound/lose.wav"),
-#           "click":pg.mixer.Sound("sound/click.wav")}
+# Loading sounds to a dicionary
+sounds = {"win":pg.mixer.Sound("sound/win.wav"), "lose":pg.mixer.Sound("sound/lose.wav"),
+          "click":pg.mixer.Sound("sound/click.wav")}
 
 alphabet = list(string.ascii_uppercase) # Getting all the letters in the latin alphabet
 
