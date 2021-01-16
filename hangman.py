@@ -63,3 +63,56 @@ class Button(object): # A GENERAL CLASS FOR ALL THE BUTTONS ON THE SCREEN (LETTE
                 self.subsurface.set_alpha(100)
             surface.blit(self.subsurface, self.pos)
             self.subsurface.blit(self.text, (self.width / 4, self.height / 5))
+
+
+
+notesArea = pg.Surface((sw,700))        # CREATING TWO
+notesArea.fill(colors["lavender"])         # AREAS WITH DIFFERENT
+                                        # COLORS
+buttonArea = pg.Surface((sw, 100))
+buttonArea.fill(colors["lilac"])
+
+letters = []
+j = 0   # TO ALIGN THE LETTERS ON THE SCREEN ( VERTICALLY )
+for number, letter in enumerate(alphabet):
+    if number > 12: # TO ALIGN THE LETTERS ON THE SCREEN ( HORIZONTALLY )
+        number = number - 13
+        j = 1
+    letters.append(Button(colors["gray"], (70+number*90,140+j*60), 50, 50, letter))
+
+languageButtons = []
+languageButtons.append(Button(colors["blue"], (30, 400), 85,40, "English", False, 2, 20))
+languageButtons.append(Button(colors["blue"], (120, 400), 85,40, "Romana", True, 2, 20))
+
+errorCount = 0
+
+# ROMANIAN WORDS
+wordsRO = ["HAIDUCII", "AUTOBRONZANT", "STRAZILE DIN BUCURESTI", "NEBUN DE ALB", "DRAGOSTE DE INCHIRIAT",
+            "DE CE PLANG CHITARELE", "NOAPTEA GOLANII"]
+
+# ENGLISH WORDS
+wordsEN = ["YOU GIVE LOVE A BAD NAME", "LET IT BE", "HOLD THE LINE", "PIANO MAN", "DANCING QUEEN",
+            "NOTHING ELSE MATTERS", "ANOTHER BRICK IN THE WALL", "HOTEL CALIFORNIA", "HYPNOTYZE",
+            "AMBITIONZ AZ A RIDAH"]
+
+languageChoice = 1 # 1 == ROMANIAN, 2 == ENGLISH, DEFAULT IS ROMANIAN
+if languageChoice == 1:
+    currentLanguage = wordsRO
+else:
+    currentLanguage = wordsEN
+currentWord = random.randrange(0, len(currentLanguage))
+
+guessed = []
+
+lw = 40 # WIDTH OF THE LINE FOR THE LETTERS
+ls = 10 # SPACE BETWEEN THE LINES
+
+needRestart = False # FOR CONDITIONS IN WHICH YOU NEED TO RESTART THE GAME, LIKE CHANGING THE LANGUAGE
+winCount = 0
+pointCount = 0
+spaceCount = 0  # COUNTING HOW MANY SPACES A WORD HAS, IT'LL BE IMPORTANT WHEN CHECKING-
+for letter in currentLanguage[currentWord]: # - IF YOU GUESSED THE WORD COMPLETELY.
+    if letter == " ":
+        spaceCount += 1
+print(len(wordsEN))
+print(len(wordsRO))
