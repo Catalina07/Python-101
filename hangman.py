@@ -48,7 +48,7 @@ class Button(object): # A GENERAL CLASS FOR ALL THE BUTTONS ON THE SCREEN (LETTE
         self.text = self.font.render(self.letter, True, colors["lavender"])
 
     def Draw(self, surface):
-         if self.type == 1:
+        if self.type == 1:
             if self.rollOver:                   # IF A TYPE 1 BUTTON IS UNDER
                 self.subsurface.set_alpha(200)  # THE MOUSE, MAKE IT LESS VIBRANT
             else:
@@ -116,3 +116,128 @@ for letter in currentLanguage[currentWord]: # - IF YOU GUESSED THE WORD COMPLETE
         spaceCount += 1
 print(len(wordsEN))
 print(len(wordsRO))
+
+while True:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            pg.quit()
+            sys.exit()
+        if event.type == pg.MOUSEMOTION:
+            for button in letters: # CHECK IF MOUSE IS ON ANY BUTTONS, BUTTON POS GOT BY CALLING GET_RECT()
+                currentRect = button.subsurface.get_rect(topleft = (button.pos[0], button.pos[1]))
+                if currentRect.collidepoint(pg.mouse.get_pos()): # IF COLLIDING WITH MOUSE CURSOR
+                    button.rollOver = True      # ONLY HIGHLIGHT A BUTTON IF YOU ARE
+                else:                           # ON IT AND IF YOU AREN'T, STOP HIGHLIGHTING
+                    button.rollOver = False
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1: # LEFT MOUSE BUTTON / LEFT CLICK
+                for button in letters:
+                    if button.rollOver == True and button.clicked == False: # IF YOU ARE ON THE BUTTON AND IF
+                        sounds["click"].play()                              # THE BUTTON ISN'T CLICKED STILL,
+                        button.clicked = True                               # ONLY THEN IT'S CLICKABLE.
+                        guessed.append(button.letter)
+                        noError = False
+                        for letter in currentLanguage[currentWord]:
+                            if button.letter == letter:
+                                noError = True
+                        if errorCount < 6 and not noError: # IF THAT LETTER ISN'T IN THE WORD, IF NOERROR == FALSE,
+                            errorCount += 1                # UP THE ERROR COUNT BY ONE
+                for button in languageButtons:
+                    currentRectLang = button.subsurface.get_rect(topleft = (button.pos[0], button.pos[1]))
+                    if currentRectLang.collidepoint(pg.mouse.get_pos()):    # SAME PROCESS WITH THE LANG. BUTTONS
+                        button.active = True
+                        sounds["click"].play()
+                        if button.letter == "English":
+                            currentLanguage = wordsEN
+                        else:
+                            currentLanguage = wordsRO
+                        currentIndex = languageButtons.index(button)            # IF YOU ACTIVATE A LANG. BUTTON
+                        for subbutton in languageButtons:                       # THE OTHERS GET DEACTIVATED.
+                            if languageButtons.index(subbutton) == currentIndex:
+                                pass
+                            else:
+                                subbutton.active = False
+                                needRestart = True          # NEED TO RESTART THE GAME
+
+
+    screen.fill(colors["white"])        # BG COLOR THAT WE WON'T SEE
+    screen.blit(notesArea, (0,0))       # TOP PART
+    screen.blit(buttonArea, (0, 700))   # BOTTOM PART
+
+    screen.blit(images["logo"], (sc[0]-images["logo"].get_rect().width/2, 10)) # LOGO
+
+    screen.blit(images[errorCount], (sc[0]-images[errorCount].get_rect().width/2, sc[1]-images[errorCount].get_rect().height/2+70))
+    # ^^ THE HANGMAN PICTURES
+
+    for letter in letters:              # DRAWING
+        letter.Draw(screen)             # THE BUTTONS
+                                        # TO THE
+    for langbut in languageButtons:     # SCREEN
+        langbut.Draw(screen)
+
+    stats_font = pg.font.SysFont(None, 25, False, True)  # A FONT FOR THE STATS
+    winCountText = stats_font.render("TOTAL WINS       : " + str(winCount), True, colors["black"])
+    pointCountText = stats_font.render("TOTAL POINTS   : " + str(pointCount), True, colors["black"])
+    screen.blit(winCountText, (30, 300))
+    screen.blit(pointCountText, (30, 330))
+
+    totalShown = 0  # TOTAL LETTERS SHOWN AT THE BOTTOM PART
+    if not needRestart:
+        for i,letter in enumerate(currentLanguage[currentWord]):
+            text = default_font.render(letter, True, colors["black"])
+            posX = (1280 - len(currentLanguage[currentWord]) * (lw + ls))/2 + i * (lw + ls)
+            posY = 740
+            if letter != " ":
+                pg.draw.rect(screen, colors["black"], (posX, posY, lw, 3))
+            else:
+                pg.draw.rect(screen, colors["lilac"], (posX, posY, lw, 3))
+            if letter in guessed:
+                totalShown += 1
+                screen.blit(text, (posX+lw/3, posY-30))
+
+    pg.display.update() # UPDATING THE SCREEN AT THIS POINT, ANYTHIGN AFTER THIS WON'T BE SEEN UNTIL
+                        # A NEW FRAME STARTS OR I MANUALLY UPDATE IT AGAIN, WHICH I DO AT LINE 239 AND 258
+
+    final_font = pg.font.SysFont(None, 80)
+    lose_text = final_font.render("YOU LOSE", True, colors["darkred"])
+    win_text = final_font.render("YOU GUESSED IT", True, colors["darkgreen"])
+
+
+    if errorCount >= 6 or needRestart:  # IF A RESTART CONDITION IS MET
+        if not needRestart:    # But if that condition is not by changing languages: lose.
+            sounds["lose"].play()
+            screen.blit(lose_text, (500,380))
+            pg.display.update()
+            pg.time.wait(1000)
+        guessed.clear() #       RESETTING EVERYTHING            #
+        pointCount = 0                                          #
+        errorCount = 0                                          #
+        winCount = 0                                            #
+        for letter in letters:                                  #
+            letter.clicked = False                              #
+        currentWord = random.randrange(0, len(currentLanguage)) #
+        spaceCount = 0                                          #
+        for letter in currentLanguage[currentWord]:             #
+            if letter == " ":                                   #
+                spaceCount += 1                                 #
+        needRestart = False                                     #
+        pg.time.wait(1000)                                      #
+
+    if totalShown == len(currentLanguage[currentWord]) - spaceCount: # IF IT'S A WIN CONDITION
+        sounds["win"].play()
+        screen.blit(win_text, (380, 380))
+        pg.display.update()
+        pg.time.wait(1000)
+        guessed.clear()
+        pointCount += 600 + winCount*10 - errorCount * 100 # POINTS SYSTEM, GAIN FEWER POINTS IF YOU HAD MORE ERRORS
+        errorCount = 0
+        winCount+=1
+
+        for letter in letters:
+            letter.clicked = False
+        currentWord = random.randrange(0, len(currentLanguage))
+        spaceCount = 0
+        for letter in currentLanguage[currentWord]:
+            if letter == " ":
+                spaceCount += 1
+        pg.time.wait(1000)
